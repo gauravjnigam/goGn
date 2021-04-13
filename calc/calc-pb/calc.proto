@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package calc;
+
+option go_package="calc/calc-pb";
+
+message SumMessage {
+    int64 num1 = 1;
+    int64 num2 = 2;
+}
+
+message SumRequest {
+    SumMessage sumMessage = 1;
+}
+
+message SumResponse {
+    int64 result = 1;
+}
+
+service CalculatorService {
+    rpc CalcSum(SumRequest) returns (SumResponse) {}; 
+}
