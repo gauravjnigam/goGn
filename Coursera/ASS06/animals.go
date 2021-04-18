@@ -93,12 +93,14 @@ const (
 
 func main() {
 
-	animalMap := make(map[string]Animal)
+	cowMap := make(map[string]Cow)
+	birdMap := make(map[string]Bird)
+	snakeMap := make(map[string]Snake)
 
 	input_scanner := bufio.NewScanner(os.Stdin)
 	fmt.Println("Usage : ")
 	fmt.Println(" > newanimal name type[cow, bird, snake]")
-	fmt.Println(" > query name action")
+	fmt.Println(" > query name actionp[eat, move, speak]")
 	for {
 		fmt.Print(" > ")
 		input_scanner.Scan()
@@ -106,9 +108,9 @@ func main() {
 		req := strings.Split(input_str, " ")
 		switch req[0] {
 		case NEW_ANIMAL:
-			createAnimal(animalMap, req)
+			createAnimal(cowMap, birdMap, snakeMap, req)
 		case QUERY:
-			queryAnimal(animalMap, req)
+			fmt.Println(queryAnimal(cowMap, birdMap, snakeMap, req))
 		default:
 			fmt.Println("Invalid input/command")
 		}
@@ -116,7 +118,7 @@ func main() {
 	}
 }
 
-func createAnimal(animalMap map[string]Animal, req []string) bool {
+func createAnimal(cowMap map[string]Cow, birdMap map[string]Bird, snakeMap map[string]Snake, req []string) bool {
 	if len(req) != 3 {
 		fmt.Println("invalid command")
 		return false
@@ -124,14 +126,14 @@ func createAnimal(animalMap map[string]Animal, req []string) bool {
 	animal_name := req[1]
 	animal_type := req[2]
 
-	fmt.Printf("animal name : %s, type : %s\n", animal_name, animal_type)
+	//fmt.Printf("NEW# name : %s, type : %s\n", animal_name, animal_type)
 
 	switch animal_type {
 	case "cow":
-		var cow1 Animal = NewCow()
-		fmt.Println(cow1.food)
-		animalMap[animal_name] = cow1
+		cow := NewCow()
+		cowMap[animal_name] = *cow
 	case "bird":
+
 	case "snake":
 	default:
 		fmt.Println("Invalid animal type.. supported animals are cow, bird, snake ")
@@ -140,7 +142,26 @@ func createAnimal(animalMap map[string]Animal, req []string) bool {
 	return true
 }
 
-func queryAnimal(animalMap map[string]Animal, req []string) string {
+func queryAnimal(cowMap map[string]Cow, birdMap map[string]Bird, snakeMap map[string]Snake, req []string) string {
+	if len(req) != 3 {
+		fmt.Println("invalid command")
+		return "value not found!!!"
+	}
+	animal_name := req[1]
+	action := req[2]
+
+	//fmt.Printf("QUERY#  name : %s, action : %s\n", animal_name, action)
+
+	if val, ok := cowMap[animal_name]; ok {
+		switch {
+		case strings.Compare("eat", action) == 0:
+			return val.Eat()
+		case strings.Compare("move", action) == 0:
+			return val.Move()
+		case strings.Compare("speak", action) == 0:
+			return val.Speak()
+		}
+	}
 
 	return "value not found"
 }
