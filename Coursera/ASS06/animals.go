@@ -1,3 +1,29 @@
+/*
+Test the program by running it and issuing three newanimal commands followed by three query commands. Each new animal should involve a different animal type (cow, bird, snake), each with a different name. Each query should involve a different animal and a different property of the animal (eat, move, speak). Give 2 points for each query for which the program provides the correct response.
+
+Examine the code. If the code contains an interface type called Animal, which is a struct containing three fields, all of which are strings, then give another 2 points. If the program contains three types – Cow, Bird, and Snake – which all satisfy the Animal interface, give another 2 points.
+
+Write a program which allows the user to create a set of animals and to get information about those animals. Each animal has a name and can be either a cow, bird, or snake. With each command, the user can either create a new animal of one of the three types, or the user can request information about an animal that he/she has already created. Each animal has a unique name, defined by the user. Note that the user can define animals of a chosen type, but the types of animals are restricted to either cow, bird, or snake. The following table contains the three types of animals and their associated data.
+
+Animal	Food eaten	Locomtion method	Spoken sound
+cow	grass	walk	moo
+bird	worms	fly	peep
+snake	mice	slither	hsss
+Your program should present the user with a prompt, ">", to indicate that the user can type a request. Your program should accept one command at a time from the user, print out a response, and print out a new prompt on a new line. Your program should continue in this loop forever. Every command from the user must be either a "newanimal" command or a "query" command.
+
+Each "newanimal" command must be a single line containing three strings. The first string is "newanimal". The second string is an arbitrary string which will be the name of the new animal. The third string is the type of the new animal, either "cow", "bird", or "snake".  Your program should process each newanimal command by creating the new animal and printing "Created it!" on the screen.
+
+Each "query" command must be a single line containing 3 strings. The first string is "query". The second string is the name of the animal. The third string is the name of the information requested about the animal, either "eat", "move", or "speak". Your program should process each query command by printing out the requested data.
+
+Define an interface type called Animal which describes the methods of an animal. Specifically, the Animal interface` should contain the methods Eat(), Move(), and Speak(), which take no arguments and return no values. The Eat() method should print the animal’s food, the Move() method should print the animal’s locomotion, and the Speak() method should print the animal’s spoken sound. Define three types Cow, Bird, and Snake. For each of these three types, define methods Eat(), Move(), and Speak() so that the types Cow, Bird, and Snake all satisfy the Animal interface. When the user creates an animal, create an object of the appropriate type. Your program should call the appropriate method when the user issues a query command.
+
+newanimal john cow
+query john eat
+query john2 move
+"cow", "bird", or "snake"
+"eat", "move", or "speak"
+*/
+
 package main
 
 import (
@@ -7,161 +33,134 @@ import (
 	"strings"
 )
 
-/*
-Write a program which allows the user to get information about a predefined set of animals.
-Three animals are predefined, cow, bird, and snake. Each animal can eat, move, and speak.
- The user can issue a request to find out one of three things about an animal:
-  1) the food that it eats,
-  2) its method of locomotion, and
-  3) the sound it makes when it speaks.
-*/
+const command_new = "newanimal"
+const command_query = "query"
+const info_eat = "eat"
+const info_move = "move"
+const info_speak = "speak"
+const type_cow = "cow"
+const type_bird = "bird"
+const type_snake = "snake"
 
 type Animal interface {
 	Eat()
 	Move()
-	Speek()
+	Speak()
 }
 
+// ========== Cow ==========
 type Cow struct {
-	food, locomotion, noice string
+	Food       string
+	Locomotion string
+	Noise      string
 }
 
-func NewCow() *Cow {
-	cow := new(Cow)
-
-	cow.food = "grass"
-	cow.locomotion = "walk"
-	cow.noice = "moo"
-
-	return cow
+func (cow *Cow) Eat() {
+	fmt.Println(cow.Food)
+}
+func (cow *Cow) Move() {
+	fmt.Println(cow.Locomotion)
+}
+func (cow *Cow) Speak() {
+	fmt.Println(cow.Noise)
 }
 
-func (cow *Cow) Eat() string {
-	return cow.food
-}
-func (cow *Cow) Move() string {
-	return cow.locomotion
-}
-func (cow *Cow) Speak() string {
-	return cow.noice
-}
-
+// ========== Bird ==========
 type Bird struct {
-	food, locomotion, noice string
+	Food       string
+	Locomotion string
+	Noise      string
 }
 
-func (bird *Bird) NewBird() {
-	bird.food = "worms"
-	bird.locomotion = "fly"
-	bird.noice = "peep"
+func (cow *Bird) Eat() {
+	fmt.Println(cow.Food)
+}
+func (cow *Bird) Move() {
+	fmt.Println(cow.Locomotion)
+}
+func (cow *Bird) Speak() {
+	fmt.Println(cow.Noise)
 }
 
-func (b *Bird) Eat() string {
-	return b.food
-}
-func (b *Bird) Move() string {
-	return b.locomotion
-}
-func (b *Bird) Speak() string {
-	return b.noice
-}
-
+// ========== Snake ==========
 type Snake struct {
-	food, locomotion, noice string
+	Food       string
+	Locomotion string
+	Noise      string
 }
 
-func (snake *Snake) NewSnake() {
-	snake.food = "mice"
-	snake.locomotion = "slither"
-	snake.noice = "hsss"
+func (cow *Snake) Eat() {
+	fmt.Println(cow.Food)
+}
+func (cow *Snake) Move() {
+	fmt.Println(cow.Locomotion)
+}
+func (cow *Snake) Speak() {
+	fmt.Println(cow.Noise)
 }
 
-func (s *Snake) Eat() string {
-	return s.food
-}
-func (s *Snake) Move() string {
-	return s.locomotion
-}
-func (s *Snake) Speak() string {
-	return s.noice
+// ========== New Animal ==========
+func createAnimal(name string, typeAnimal string, animalMap *map[string]Animal) {
+	switch typeAnimal {
+	case type_cow:
+		cow := Cow{"grass", "walk", "moo"}
+		(*animalMap)[name] = &cow
+	case type_bird:
+		bird := Bird{"worms", "fly", "peep"}
+		(*animalMap)[name] = &bird
+	case type_snake:
+		snake := Snake{"mice", "slither", "hsss"}
+		(*animalMap)[name] = &snake
+	default:
+		fmt.Println("Invalid animal type (cow, bird, snake)")
+		return
+	}
+	fmt.Println("Created it!")
 }
 
-const (
-	NEW_ANIMAL string = "newanimal"
-	QUERY      string = "query"
-)
+// ========== Query Animal ==========
+func queryAnimal(name string, info string, animalMap *map[string]Animal) {
+	if (*animalMap)[name] == nil {
+		fmt.Println("Animal's name not found")
+		return
+	}
+
+	switch info {
+	case info_eat:
+		(*animalMap)[name].Eat()
+	case info_move:
+		(*animalMap)[name].Move()
+	case info_speak:
+		(*animalMap)[name].Speak()
+	default:
+		fmt.Println("Invalid animal info (eat, move, speak)")
+	}
+}
 
 func main() {
-
-	cowMap := make(map[string]Cow)
-	birdMap := make(map[string]Bird)
-	snakeMap := make(map[string]Snake)
-
-	input_scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("Usage : ")
-	fmt.Println(" > newanimal name type[cow, bird, snake]")
-	fmt.Println(" > query name actionp[eat, move, speak]")
+	reader := bufio.NewReader(os.Stdin)
+	animalMap := make(map[string]Animal)
 	for {
-		fmt.Print(" > ")
-		input_scanner.Scan()
-		input_str := input_scanner.Text()
-		req := strings.Split(input_str, " ")
-		switch req[0] {
-		case NEW_ANIMAL:
-			createAnimal(cowMap, birdMap, snakeMap, req)
-		case QUERY:
-			fmt.Println(queryAnimal(cowMap, birdMap, snakeMap, req))
-		default:
-			fmt.Println("Invalid input/command")
-		}
+		fmt.Print("> ")
+		line, _, _ := reader.ReadLine()
+		lineString := strings.TrimSpace(string(line))
+		lineStringLower := strings.ToLower(lineString)
+		word := strings.Fields(lineStringLower)
 
-	}
-}
+		if len(word) == 3 {
+			switch word[0] {
+			case command_new:
+				createAnimal(word[1], word[2], &animalMap)
+			case command_query:
+				queryAnimal(word[1], word[2], &animalMap)
+			default:
+				fmt.Println("Invalid command (newanimal, query)")
+			}
 
-func createAnimal(cowMap map[string]Cow, birdMap map[string]Bird, snakeMap map[string]Snake, req []string) bool {
-	if len(req) != 3 {
-		fmt.Println("invalid command")
-		return false
-	}
-	animal_name := req[1]
-	animal_type := req[2]
-
-	//fmt.Printf("NEW# name : %s, type : %s\n", animal_name, animal_type)
-
-	switch animal_type {
-	case "cow":
-		cow := NewCow()
-		cowMap[animal_name] = *cow
-	case "bird":
-
-	case "snake":
-	default:
-		fmt.Println("Invalid animal type.. supported animals are cow, bird, snake ")
-	}
-
-	return true
-}
-
-func queryAnimal(cowMap map[string]Cow, birdMap map[string]Bird, snakeMap map[string]Snake, req []string) string {
-	if len(req) != 3 {
-		fmt.Println("invalid command")
-		return "value not found!!!"
-	}
-	animal_name := req[1]
-	action := req[2]
-
-	//fmt.Printf("QUERY#  name : %s, action : %s\n", animal_name, action)
-
-	if val, ok := cowMap[animal_name]; ok {
-		switch {
-		case strings.Compare("eat", action) == 0:
-			return val.Eat()
-		case strings.Compare("move", action) == 0:
-			return val.Move()
-		case strings.Compare("speak", action) == 0:
-			return val.Speak()
+		} else if strings.ToLower(lineString) == "x" {
+			break
+		} else {
+			fmt.Println("Invalid command")
 		}
 	}
-
-	return "value not found"
 }
