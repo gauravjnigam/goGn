@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"sync"
+	"time"
 )
 
 /*
@@ -34,21 +35,50 @@ type Philosopher struct {
 	leftCS, rigthCS *Chopstick
 }
 
-func (philos *Philosopher) eat() {
+func (philos *Philosopher) Eat() {
 	for i := 0; i < PHILOS_EATING_COUNT; i++ {
+		philos.leftCS.Lock()
+		philos.rigthCS.Lock()
+
+		fmt.Printf("%d Eating ...\n", philos.philosId)
+		time.Sleep(100 * time.Millisecond)
+		philos.leftCS.Unlock()
+		philos.rigthCS.Unlock()
 
 	}
+	wg.Done()
 }
 
 type Chopstick struct {
 	sync.Mutex
 }
 
+var wg sync.WaitGroup
+
 func main() {
 	fmt.Println("Dining philosophers .. Starting... ")
 
 	// create chops stics
-	chops := make([]Chopstick, 5)
+	chops := make([]*Chopstick, 5)
+	for i := 0; i < 5; i++ {
+		chops[i] = new(Chopstick)
+	}
 	// create 5 philosophers
+
+	philos := make([]Philosopher, 5)
+	for i := 0; i < 5; i++ {
+		philos[i] = Philosopher{i, chops[i], chops[(i+1)%5]}
+	}
+
 	// create Host
+
+	// start the Dining
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go philos[i].Eat()
+	}
+
+	wg.Wait()
+	fmt.Println("Dining philosophers .. Ending here... ")
+
 }
