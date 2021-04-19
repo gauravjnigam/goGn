@@ -66,7 +66,7 @@ func main() {
 		mapOfSlice[0] = mergeSortedArray(mapOfSlice[0], mapOfSlice[i])
 	}
 
-	fmt.Printf("sorted array : %v \n ", mapOfSlice[0])
+	fmt.Printf("merged sorted array : %v \n ", mapOfSlice[0])
 
 }
 
@@ -98,6 +98,8 @@ func mergeSortedArray(left, right []int) (result []int) {
 }
 
 func sortArr(arr []int) {
+	fmt.Printf("Unsorted : %v\n", arr)
 	sort.Ints(arr)
+	fmt.Printf("Sorted : %v\n", arr)
 	wg.Done()
 }
