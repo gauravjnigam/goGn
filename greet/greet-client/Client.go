@@ -23,7 +23,7 @@ func main() {
 
 	c := greetpb.NewGreetServiceClient(conn)
 
-	//fmt.Printf("created client : %f", c)
+	fmt.Printf("created client : %f", c)
 
 	callUninry(c)
 
