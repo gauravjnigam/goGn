@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -24,6 +25,28 @@ func (*calcServer) CalcSum(context context.Context, request *calcpb.SumRequest) 
 
 	return &res, nil
 
+}
+
+func (*calcServer) PrimeNumberDecomposition(request *calcpb.PrimeNumRequest, streamData calcpb.CalculatorService_PrimeNumberDecompositionServer) error {
+	fmt.Printf("Recived PrimeNumber Decomposition request %v \n", request)
+	primeNum := request.GetPrimeNumMessage().GetPrimeNum()
+
+	var k int64 = 2
+	n := primeNum
+	for n > 1 {
+		if n%k == 0 {
+			res := &calcpb.PrimeNumResponse{
+				Result: k,
+			}
+			streamData.Send(res)
+			n = n / k
+			time.Sleep(1000 * time.Millisecond)
+		} else {
+			k = k + 1
+		}
+	}
+	fmt.Printf("Prime number decomposition is completed by server!!!\n")
+	return nil
 }
 
 func main() {

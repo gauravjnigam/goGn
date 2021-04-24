@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	"google.golang.org/grpc"
@@ -27,6 +28,38 @@ func main() {
 
 	result := callCalcSumService(c, 3, 10)
 	fmt.Printf("Sum from server : %d \n", result)
+
+	callPrimeNumDecoposition(c)
+
+}
+
+func callPrimeNumDecoposition(client calcpb.CalculatorServiceClient) {
+	fmt.Printf("Calling prime number decomposition \n")
+	req := &calcpb.PrimeNumRequest{
+		PrimeNumMessage: &calcpb.PrimeNumMessage{
+			PrimeNum: 120,
+		},
+	}
+
+	resStream, err := client.PrimeNumberDecomposition(context.Background(), req)
+	if err != nil {
+		log.Fatal("Error while calling PrimeNumberDecomposition request - %v", err)
+	}
+
+	for {
+		res, err := resStream.Recv()
+
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal("Error while streaming response - %v", err)
+		}
+		fmt.Printf("%d,", res.GetResult())
+
+	}
+
+	fmt.Printf("\nClient has completed the processing!!!\n")
 
 }
 

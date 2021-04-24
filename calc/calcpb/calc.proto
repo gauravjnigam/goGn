@@ -9,6 +9,10 @@ message SumMessage {
     int64 num2 = 2;
 }
 
+message PrimeNumMessage {
+    int64 primeNum = 1;
+}
+
 message SumRequest {
     SumMessage sumMessage = 1;
 }
@@ -17,6 +21,15 @@ message SumResponse {
     int64 result = 1;
 }
 
+message PrimeNumRequest {
+    PrimeNumMessage primeNumMessage = 1;
+}
+
+message PrimeNumResponse {
+    int64 result = 1;
+}
+
 service CalculatorService {
     rpc CalcSum(SumRequest) returns (SumResponse) {}; 
+    rpc PrimeNumberDecomposition(PrimeNumRequest) returns (stream PrimeNumResponse) {};
 }
