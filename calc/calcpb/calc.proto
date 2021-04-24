@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package calc;
 
-option go_package="calc/calc-pb";
+option go_package="calc/calcpb";
 
 message SumMessage {
     int64 num1 = 1;

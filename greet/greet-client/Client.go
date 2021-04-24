@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 
 	"google.golang.org/grpc"
@@ -27,6 +28,8 @@ func main() {
 
 	callUninry(c)
 
+	callServerStreaming(c)
+
 }
 
 func callUninry(c greetpb.GreetServiceClient) {
@@ -44,4 +47,33 @@ func callUninry(c greetpb.GreetServiceClient) {
 	}
 
 	log.Printf("Greet response : %v", res.Result)
+}
+
+func callServerStreaming(c greetpb.GreetServiceClient) {
+	fmt.Printf("Starting the serverStreaming \n")
+
+	req := &greetpb.GreetManyTimesRequest{
+		Greeting: &greetpb.Greeting{
+			FirstName: "Gaurav",
+			LastName:  "Nigam",
+		},
+	}
+
+	resStream, err := c.GreetManyTimes(context.Background(), req)
+
+	if err != nil {
+		log.Fatal("Error while calling GreetingmanyTimes - %v\n", err)
+	}
+
+	for {
+		msg, err := resStream.Recv()
+
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatal("Error while streaming response - %v", err)
+		}
+		fmt.Printf("Response from GreetingManyTimes : %v\n", msg.GetResult())
+	}
 }

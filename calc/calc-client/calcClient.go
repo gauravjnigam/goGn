@@ -1,12 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 
 	"google.golang.org/grpc"
 
-	calc_pb "calc/calc_pb"
+	"calc/calcpb"
 )
 
 func main() {
@@ -20,8 +21,30 @@ func main() {
 
 	defer conn.Close()
 
-	c := calc_pb.NewCalculatorServiceClient(conn)
+	c := calcpb.NewCalculatorServiceClient(conn)
 
-	fmt.Printf("created client : %f", c)
+	//fmt.Printf("created client : %f", c)
+
+	result := callCalcSumService(c, 3, 10)
+	fmt.Printf("Sum from server : %d \n", result)
+
+}
+
+func callCalcSumService(client calcpb.CalculatorServiceClient, n1 int64, n2 int64) int64 {
+	req := &calcpb.SumRequest{
+		SumMessage: &calcpb.SumMessage{
+			Num1: n1,
+			Num2: n2,
+		},
+	}
+
+	res, err := client.CalcSum(context.Background(), req)
+	if err != nil {
+		log.Fatalf("Error while calling Calculator service - %v", err)
+	}
+
+	return res.GetResult()
+
+	//return 10
 
 }
