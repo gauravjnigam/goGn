@@ -9,7 +9,7 @@ import (
 	"strconv"
 	"time"
 
-	greetpb "greet/greetpb"
+	greetpb "goGn/greet/greetpb"
 
 	"google.golang.org/grpc"
 )
@@ -47,7 +47,7 @@ func (*server) GreetManyTimes(req *greetpb.GreetManyTimesRequest, stream greetpb
 
 // client streaming
 func (*server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
-	fmt.Println("Server received the LongGreet request ..\n")
+	fmt.Println("Server received the LongGreet request ..")
 	result := ""
 	for {
 		req, err := stream.Recv()
@@ -58,19 +58,19 @@ func (*server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
 			})
 		}
 		if err != nil {
-			log.Fatal("Error while streaming LongGreet request - %v\n", err)
+			log.Fatal("Error while streaming LongGreet request \n", err)
 		}
 
 		firstName := req.GetGreeting().GetFirstName()
 		result += "Hello " + firstName + "!! "
 	}
 
-	return nil
+	//return nil
 }
 
 // Bi-Direction request response
 func (*server) GreetEveryone(stream greetpb.GreetService_GreetEveryoneServer) error {
-	fmt.Println("Server received the GreetEveryone request ..\n")
+	fmt.Println("Server received the GreetEveryone request ..")
 
 	for {
 		req, err := stream.Recv()
@@ -79,7 +79,7 @@ func (*server) GreetEveryone(stream greetpb.GreetService_GreetEveryoneServer) er
 			return nil
 		}
 		if err != nil {
-			log.Fatal("Error while streaming GreetEveryone request - %v\n", err)
+			log.Fatalf("Error while streaming GreetEveryone request - %v\n", err)
 		}
 
 		firstName := req.GetGreeting().GetFirstName()
@@ -89,13 +89,11 @@ func (*server) GreetEveryone(stream greetpb.GreetService_GreetEveryoneServer) er
 		})
 
 		if sendErr != nil {
-			log.Fatal("Error while sending stream response %v", sendErr)
+			log.Fatalf("Error while sending stream response %v", sendErr)
 			return sendErr
 		}
 
 	}
-
-	return nil
 
 }
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	mathfun "goFunc/simplemath"
+	mathfun "goGn/goFunc/simplemath"
 	"log"
 
 	"fmt"

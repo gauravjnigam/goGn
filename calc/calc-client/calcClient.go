@@ -8,7 +8,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"calc/calcpb"
+	"goGn/calc/calcpb"
 )
 
 func main() {
@@ -43,7 +43,7 @@ func callPrimeNumDecoposition(client calcpb.CalculatorServiceClient) {
 
 	resStream, err := client.PrimeNumberDecomposition(context.Background(), req)
 	if err != nil {
-		log.Fatal("Error while calling PrimeNumberDecomposition request - %v", err)
+		log.Fatalf("Error while calling PrimeNumberDecomposition request - %v", err)
 	}
 
 	for {
@@ -53,7 +53,7 @@ func callPrimeNumDecoposition(client calcpb.CalculatorServiceClient) {
 			break
 		}
 		if err != nil {
-			log.Fatal("Error while streaming response - %v", err)
+			log.Fatalf("Error while streaming response - %v", err)
 		}
 		fmt.Printf("%d,", res.GetResult())
 

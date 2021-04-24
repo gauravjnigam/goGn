@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"interfaceAndStruct/org"
+	"goGn/interfaceAndStruct/org"
 )
 
 func main() {

@@ -9,7 +9,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	greetpb "greet/greetpb"
+	greetpb "goGn/greet/greetpb"
 )
 
 func main() {
@@ -67,7 +67,7 @@ func callServerStreaming(c greetpb.GreetServiceClient) {
 	resStream, err := c.GreetManyTimes(context.Background(), req)
 
 	if err != nil {
-		log.Fatal("Error while calling GreetingmanyTimes - %v\n", err)
+		log.Fatalf("Error while calling GreetingmanyTimes - %v\n", err)
 	}
 
 	for {
@@ -77,7 +77,7 @@ func callServerStreaming(c greetpb.GreetServiceClient) {
 			break
 		}
 		if err != nil {
-			log.Fatal("Error while streaming response - %v", err)
+			log.Fatalf("Error while streaming response - %v", err)
 		}
 		fmt.Printf("Response from GreetingManyTimes : %v\n", msg.GetResult())
 	}
@@ -111,7 +111,7 @@ func callClientStreaming(c greetpb.GreetServiceClient) {
 
 	stream, err := c.LongGreet(context.Background())
 	if err != nil {
-		log.Fatal("Error while sending LongGreet request : %v\n", err)
+		log.Fatalf("Error while sending LongGreet request : %v\n", err)
 	}
 
 	for _, req := range requests {
@@ -123,8 +123,10 @@ func callClientStreaming(c greetpb.GreetServiceClient) {
 	res, err := stream.CloseAndRecv()
 
 	if err != nil {
-
+		log.Fatalf("Error while receiving response %v\n", err)
 	}
+
+	fmt.Printf("%s", res.GetResult())
 }
 
 func callBiDirectionStreaming(c greetpb.GreetServiceClient) {

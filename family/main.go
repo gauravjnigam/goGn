@@ -1,8 +1,8 @@
 package main
 
 import (
-	parent "family/father"
-	child "family/father/son"
+	parent "goGn/family/father"
+	child "goGn/family/father/son"
 
 	"fmt"
 )

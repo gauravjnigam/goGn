@@ -9,7 +9,7 @@ import (
 
 	"google.golang.org/grpc"
 
-	"calc/calcpb"
+	"goGn/calc/calcpb"
 )
 
 type calcServer struct{}
@@ -55,7 +55,7 @@ func main() {
 	lis, err := net.Listen("tcp", "0.0.0.0:50002")
 
 	if err != nil {
-		log.Fatal("Server : Faild to listen - %v", err)
+		log.Fatalf("Server : Faild to listen - %v", err)
 	}
 
 	s := grpc.NewServer()
@@ -63,6 +63,6 @@ func main() {
 	calcpb.RegisterCalculatorServiceServer(s, &calcServer{})
 
 	if err = s.Serve(lis); err != nil {
-		log.Fatal("Server : failed to serve - %v", err)
+		log.Fatalf("Server : failed to serve - %v", err)
 	}
 }
