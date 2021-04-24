@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"time"
 
 	"google.golang.org/grpc"
 
@@ -26,9 +27,13 @@ func main() {
 
 	fmt.Printf("created client : %f", c)
 
-	callUninry(c)
+	//callUninry(c)
 
-	callServerStreaming(c)
+	//callServerStreaming(c)
+
+	callClientStreaming(c)
+
+	//callBiDirectionStreaming(c)
 
 }
 
@@ -76,4 +81,52 @@ func callServerStreaming(c greetpb.GreetServiceClient) {
 		}
 		fmt.Printf("Response from GreetingManyTimes : %v\n", msg.GetResult())
 	}
+}
+
+func callClientStreaming(c greetpb.GreetServiceClient) {
+	fmt.Printf("Starting the clientStreaming \n")
+
+	requests := []*greetpb.LongGreetRequest{
+		&greetpb.LongGreetRequest{
+			Greeting: &greetpb.Greeting{
+				FirstName: "Gaurav",
+			},
+		},
+		&greetpb.LongGreetRequest{
+			Greeting: &greetpb.Greeting{
+				FirstName: "Ravi",
+			},
+		},
+		&greetpb.LongGreetRequest{
+			Greeting: &greetpb.Greeting{
+				FirstName: "Anu",
+			},
+		},
+		&greetpb.LongGreetRequest{
+			Greeting: &greetpb.Greeting{
+				FirstName: "Dipe",
+			},
+		},
+	}
+
+	stream, err := c.LongGreet(context.Background())
+	if err != nil {
+		log.Fatal("Error while sending LongGreet request : %v\n", err)
+	}
+
+	for _, req := range requests {
+		fmt.Printf("Sending req : %v\n", req)
+		stream.Send(req)
+		time.Sleep(1000 * time.Millisecond)
+	}
+
+	res, err := stream.CloseAndRecv()
+
+	if err != nil {
+
+	}
+}
+
+func callBiDirectionStreaming(c greetpb.GreetServiceClient) {
+	fmt.Printf("Starting the BiDirectionalStreaming \n")
 }

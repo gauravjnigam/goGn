@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"strconv"
@@ -15,6 +16,7 @@ import (
 
 type server struct{}
 
+// unary request
 func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.GreetResponse, error) {
 	log.Printf("Greet func is invoked with %v", req)
 	firstName := req.GetGreeting().GetFirstName()
@@ -28,6 +30,7 @@ func (*server) Greet(ctx context.Context, req *greetpb.GreetRequest) (*greetpb.G
 	return res, nil
 }
 
+// server streaming
 func (*server) GreetManyTimes(req *greetpb.GreetManyTimesRequest, stream greetpb.GreetService_GreetManyTimesServer) error {
 	fmt.Printf("GreetingManyTimes function is invoked by %v\n", req)
 	firstName := req.GetGreeting().GetFirstName()
@@ -40,6 +43,60 @@ func (*server) GreetManyTimes(req *greetpb.GreetManyTimesRequest, stream greetpb
 		time.Sleep(3000 * time.Millisecond)
 	}
 	return nil
+}
+
+// client streaming
+func (*server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
+	fmt.Println("Server received the LongGreet request ..\n")
+	result := ""
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			// done reading client streamed reqeuest
+			return stream.SendAndClose(&greetpb.LongGreetResponse{
+				Result: result,
+			})
+		}
+		if err != nil {
+			log.Fatal("Error while streaming LongGreet request - %v\n", err)
+		}
+
+		firstName := req.GetGreeting().GetFirstName()
+		result += "Hello " + firstName + "!! "
+	}
+
+	return nil
+}
+
+// Bi-Direction request response
+func (*server) GreetEveryone(stream greetpb.GreetService_GreetEveryoneServer) error {
+	fmt.Println("Server received the GreetEveryone request ..\n")
+
+	for {
+		req, err := stream.Recv()
+		if err == io.EOF {
+			// done reading client streamed reqeuest
+			return nil
+		}
+		if err != nil {
+			log.Fatal("Error while streaming GreetEveryone request - %v\n", err)
+		}
+
+		firstName := req.GetGreeting().GetFirstName()
+		result := "Hello " + firstName + "!! "
+		sendErr := stream.Send(&greetpb.GreetEveryoneResponse{
+			Result: result,
+		})
+
+		if sendErr != nil {
+			log.Fatal("Error while sending stream response %v", sendErr)
+			return sendErr
+		}
+
+	}
+
+	return nil
+
 }
 
 func main() {
